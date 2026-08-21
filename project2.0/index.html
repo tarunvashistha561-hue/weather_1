@@ -1,0 +1,353 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AeroSky - Premium Weather Insights</title>
+    
+    <!-- Google Fonts - Outfit for clean, modern typography -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- FontAwesome for weather and interface icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Chart.js for weather trends -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js" defer></script>
+    
+    <!-- Custom Project Stylesheet -->
+    <link rel="stylesheet" href="style.css">
+    
+    <!-- Custom Project Javascript -->
+    <script src="script.js" defer></script>
+</head>
+<body class="dark-mode"> <!-- Defaulting to premium Dark Mode -->
+    <!-- Background overlay elements for weather-based gradients -->
+    <div class="bg-gradient-overlay"></div>
+    <div class="dynamic-weather-bg" id="dynamicBg"></div>
+
+    <!-- Main Application Wrapper -->
+    <div class="app-container">
+        
+        <!-- Header Section: Logo, Search Bar, Theme Toggle, Unit Toggle -->
+        <header class="main-header glass-card">
+            <div class="logo-area">
+                <i class="fa-solid fa-cloud-sun-rain logo-icon"></i>
+                <h1>AeroSky</h1>
+            </div>
+            
+            <div class="search-section">
+                <form id="searchForm" class="search-form">
+                    <div class="input-wrapper">
+                        <i class="fa-solid fa-magnifying-glass search-icon"></i>
+                        <input type="text" id="searchInput" placeholder="Search for cities (e.g., London, Delhi)..." autocomplete="off">
+                        <button type="button" id="voiceSearchBtn" class="voice-btn" title="Voice Search">
+                            <i class="fa-solid fa-microphone"></i>
+                        </button>
+                    </div>
+                    <button type="submit" class="primary-btn search-submit-btn">
+                        <span>Search</span>
+                    </button>
+                </form>
+                
+                <button type="button" id="locationBtn" class="location-btn btn-secondary" title="Use My Location">
+                    <i class="fa-solid fa-location-crosshairs"></i>
+                    <span>My Location</span>
+                </button>
+            </div>
+
+            <div class="controls-area">
+                <!-- Temperature Metric Toggle Button -->
+                <div class="unit-toggle" id="unitToggle" title="Toggle °C / °F">
+                    <span class="active-unit" id="unitDisplay">°C</span>
+                </div>
+                
+                <!-- Dark / Light Mode Switcher -->
+                <button type="button" id="themeToggle" class="theme-toggle-btn" title="Toggle Light/Dark Theme">
+                    <i class="fa-solid fa-moon moon-icon"></i>
+                    <i class="fa-solid fa-sun sun-icon"></i>
+                </button>
+            </div>
+        </header>
+
+        <!-- Main Workspace Dashboard Grid -->
+        <main class="dashboard-grid">
+            
+            <!-- Left Panel: Sidebar containing Search History, Favorite Cities -->
+            <aside class="sidebar-panel">
+                <!-- Recent Searches Card -->
+                <section class="glass-card panel-card recent-searches">
+                    <h3><i class="fa-solid fa-history"></i> Recent Searches</h3>
+                    <div class="recent-list-container" id="recentList">
+                        <p class="empty-placeholder">No recent searches yet.</p>
+                    </div>
+                </section>
+                
+                <!-- Favorite Cities Card -->
+                <section class="glass-card panel-card favorite-cities">
+                    <h3><i class="fa-solid fa-star text-yellow"></i> Favorites</h3>
+                    <div class="favorites-list-container" id="favoritesList">
+                        <p class="empty-placeholder">No favorite cities saved.</p>
+                    </div>
+                </section>
+            </aside>
+
+            <!-- Center Panel: Primary Weather Statistics and Insights -->
+            <section class="main-weather-content">
+                
+                <!-- Row 1: Today's Primary Overview and Metrics Grid -->
+                <div class="primary-row">
+                    <!-- Main Current Weather Card -->
+                    <div class="glass-card current-weather-card" id="currentWeatherCard">
+                        <!-- Header containing location name and action buttons -->
+                        <div class="card-header">
+                            <div class="location-details">
+                                <h2 id="cityName">London</h2>
+                                <span id="countryCode">GB</span>
+                                <button type="button" id="favoriteToggleBtn" class="fav-toggle-btn" title="Add to Favorites">
+                                    <i class="fa-regular fa-star"></i>
+                                </button>
+                            </div>
+                            <span id="currentDateTime" class="date-display">Tuesday, Aug 18, 2026 • 20:35</span>
+                        </div>
+                        
+                        <!-- Middle containing Temperature and Condition Icon -->
+                        <div class="card-body">
+                            <div class="temperature-container">
+                                <span class="temp-value" id="currentTemp">21</span>
+                                <span class="temp-unit">°C</span>
+                            </div>
+                            <div class="weather-state">
+                                <div class="weather-icon-wrapper" id="weatherIconWrapper">
+                                    <i class="fa-solid fa-cloud-sun weather-icon-large"></i>
+                                </div>
+                                <span id="weatherDescription" class="weather-desc">Scattered Clouds</span>
+                            </div>
+                        </div>
+                        
+                        <!-- Footer showing low/high range -->
+                        <div class="card-footer">
+                            <span><i class="fa-solid fa-arrow-down text-blue"></i> Min: <strong id="tempMin">18°C</strong></span>
+                            <span><i class="fa-solid fa-arrow-up text-red"></i> Max: <strong id="tempMax">24°C</strong></span>
+                        </div>
+                    </div>
+
+                    <!-- Highlight Metrics Grid -->
+                    <div class="metrics-grid">
+                        <!-- Feels Like Card -->
+                        <div class="glass-card metric-card">
+                            <div class="metric-icon"><i class="fa-solid fa-temperature-half"></i></div>
+                            <div class="metric-info">
+                                <span class="metric-label">Feels Like</span>
+                                <span class="metric-value" id="feelsLike">20°C</span>
+                            </div>
+                        </div>
+                        
+                        <!-- Humidity Card -->
+                        <div class="glass-card metric-card">
+                            <div class="metric-icon"><i class="fa-solid fa-droplet"></i></div>
+                            <div class="metric-info">
+                                <span class="metric-label">Humidity</span>
+                                <span class="metric-value" id="humidity">65%</span>
+                            </div>
+                        </div>
+                        
+                        <!-- Wind Speed Card -->
+                        <div class="glass-card metric-card">
+                            <div class="metric-icon"><i class="fa-solid fa-wind"></i></div>
+                            <div class="metric-info">
+                                <span class="metric-label">Wind Speed</span>
+                                <span class="metric-value" id="windSpeed">12 km/h</span>
+                            </div>
+                        </div>
+                        
+                        <!-- Atmospheric Pressure Card -->
+                        <div class="glass-card metric-card">
+                            <div class="metric-icon"><i class="fa-solid fa-gauge-high"></i></div>
+                            <div class="metric-info">
+                                <span class="metric-label">Pressure</span>
+                                <span class="metric-value" id="pressure">1015 hPa</span>
+                            </div>
+                        </div>
+                        
+                        <!-- Visibility Card -->
+                        <div class="glass-card metric-card">
+                            <div class="metric-icon"><i class="fa-regular fa-eye"></i></div>
+                            <div class="metric-info">
+                                <span class="metric-label">Visibility</span>
+                                <span class="metric-value" id="visibility">10 km</span>
+                            </div>
+                        </div>
+
+                        <!-- UV Index Card -->
+                        <div class="glass-card metric-card">
+                            <div class="metric-icon"><i class="fa-solid fa-sun-plant-wilt"></i></div>
+                            <div class="metric-info">
+                                <span class="metric-label">UV Index</span>
+                                <span class="metric-value" id="uvIndex">3 (Moderate)</span>
+                            </div>
+                        </div>
+                        
+                        <!-- Air Quality Index Card -->
+                        <div class="glass-card metric-card col-span-2">
+                            <div class="metric-icon"><i class="fa-solid fa-wind"></i></div>
+                            <div class="metric-info aq-info">
+                                <div>
+                                    <span class="metric-label">Air Quality Index (AQI)</span>
+                                    <span class="metric-value" id="aqiValue">1 - Good</span>
+                                </div>
+                                <div class="aqi-meter">
+                                    <div class="aqi-fill" id="aqiFill" style="width: 20%;"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Row 2: Sun Times & Charts & Hourly Forecast -->
+                <div class="secondary-row">
+                    <!-- Sunrise & Sunset Card -->
+                    <div class="glass-card sun-card">
+                        <h3><i class="fa-solid fa-circle-half-stroke"></i> Sun & Moon</h3>
+                        <div class="sun-times">
+                            <div class="sun-event">
+                                <i class="fa-solid fa-cloud-sun-up text-orange"></i>
+                                <div>
+                                    <span>Sunrise</span>
+                                    <strong id="sunriseTime">05:45 AM</strong>
+                                </div>
+                            </div>
+                            <div class="sun-event">
+                                <i class="fa-solid fa-cloud-sun-down text-purple"></i>
+                                <div>
+                                    <span>Sunset</span>
+                                    <strong id="sunsetTime">08:12 PM</strong>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Temperature Chart Card -->
+                    <div class="glass-card chart-card">
+                        <h3><i class="fa-solid fa-chart-line"></i> Hourly Temperature Trend</h3>
+                        <div class="chart-wrapper">
+                            <canvas id="tempChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Row 3: Hourly Forecast Scroller -->
+                <div class="glass-card forecast-horizontal-section">
+                    <h3><i class="fa-solid fa-clock"></i> Hourly Forecast</h3>
+                    <div class="hourly-scroller" id="hourlyScroller">
+                        <!-- Dynamic items will load here -->
+                        <div class="hourly-item">
+                            <span>09:00</span>
+                            <i class="fa-solid fa-cloud-sun"></i>
+                            <strong>20°C</strong>
+                        </div>
+                        <div class="hourly-item">
+                            <span>12:00</span>
+                            <i class="fa-solid fa-sun text-yellow"></i>
+                            <strong>24°C</strong>
+                        </div>
+                        <div class="hourly-item">
+                            <span>15:00</span>
+                            <i class="fa-solid fa-sun text-yellow"></i>
+                            <strong>23°C</strong>
+                        </div>
+                        <div class="hourly-item">
+                            <span>18:00</span>
+                            <i class="fa-solid fa-cloud-sun"></i>
+                            <strong>21°C</strong>
+                        </div>
+                        <div class="hourly-item">
+                            <span>21:00</span>
+                            <i class="fa-solid fa-cloud"></i>
+                            <strong>18°C</strong>
+                        </div>
+                        <div class="hourly-item">
+                            <span>00:00</span>
+                            <i class="fa-solid fa-moon"></i>
+                            <strong>17°C</strong>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Row 4: 5-Day Forecast -->
+                <div class="glass-card forecast-vertical-section">
+                    <h3><i class="fa-solid fa-calendar-days"></i> 5-Day Forecast</h3>
+                    <div class="forecast-grid" id="fiveDayForecastGrid">
+                        <!-- Dynamic items will load here -->
+                        <div class="forecast-day-row">
+                            <span class="day-name">Wednesday</span>
+                            <div class="forecast-state">
+                                <i class="fa-solid fa-cloud-rain"></i>
+                                <span>Rainy</span>
+                            </div>
+                            <span class="forecast-temp-range">14°C - 20°C</span>
+                        </div>
+                        <div class="forecast-day-row">
+                            <span class="day-name">Thursday</span>
+                            <div class="forecast-state">
+                                <i class="fa-solid fa-cloud-sun"></i>
+                                <span>Partly Cloudy</span>
+                            </div>
+                            <span class="forecast-temp-range">15°C - 22°C</span>
+                        </div>
+                        <div class="forecast-day-row">
+                            <span class="day-name">Friday</span>
+                            <div class="forecast-state">
+                                <i class="fa-solid fa-sun text-yellow"></i>
+                                <span>Sunny</span>
+                            </div>
+                            <span class="forecast-temp-range">17°C - 25°C</span>
+                        </div>
+                        <div class="forecast-day-row">
+                            <span class="day-name">Saturday</span>
+                            <div class="forecast-state">
+                                <i class="fa-solid fa-cloud"></i>
+                                <span>Cloudy</span>
+                            </div>
+                            <span class="forecast-temp-range">16°C - 21°C</span>
+                        </div>
+                        <div class="forecast-day-row">
+                            <span class="day-name">Sunday</span>
+                            <div class="forecast-state">
+                                <i class="fa-solid fa-cloud-showers-heavy"></i>
+                                <span>Stormy</span>
+                            </div>
+                            <span class="forecast-temp-range">13°C - 19°C</span>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </main>
+
+        <!-- Footer Area -->
+        <footer class="app-footer glass-card">
+            <p>Designed with <i class="fa-solid fa-heart text-red"></i> for modern weather insights. Powered by OpenWeatherMap API.</p>
+            <p class="copyright">&copy; 2026 AeroSky. All rights reserved.</p>
+        </footer>
+    </div>
+
+    <!-- UI Overlay Components -->
+    <!-- Loading Spinner Overlay -->
+    <div class="overlay-container hidden" id="loadingOverlay">
+        <div class="spinner-box">
+            <div class="loading-spinner"></div>
+            <p>Gathering atmospheric metrics...</p>
+        </div>
+    </div>
+
+    <!-- Offline Notification Bar -->
+    <div class="offline-notification hidden" id="offlineNotification">
+        <i class="fa-solid fa-wifi-slash"></i>
+        <span>Internet connection lost. Displaying cached weather records.</span>
+    </div>
+
+    <!-- Toast Error Notification Manager -->
+    <div class="toast-container" id="toastContainer"></div>
+</body>
+</html>

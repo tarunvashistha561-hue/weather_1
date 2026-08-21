@@ -1,0 +1,1158 @@
+/* ==========================================================================
+   AeroSky - Premium Weather Dashboard Stylesheet
+   Core: Vanilla CSS3, Grid & Flexbox, Glassmorphism, Theme Variables
+   ========================================================================== */
+
+/* --------------------------------------------------------------------------
+   1. Design System & Custom Properties (Variables)
+   -------------------------------------------------------------------------- */
+:root {
+    /* Color Palette - Dark Theme (Default) */
+    --bg-primary: #0a0e17;
+    --bg-gradient: radial-gradient(circle at 10% 20%, rgba(13, 20, 35, 1) 0%, rgba(8, 11, 20, 1) 90%);
+    --card-bg: rgba(20, 30, 48, 0.45);
+    --card-bg-hover: rgba(28, 41, 66, 0.55);
+    --card-border: rgba(255, 255, 255, 0.06);
+    --card-border-hover: rgba(255, 255, 255, 0.12);
+    --input-bg: rgba(255, 255, 255, 0.04);
+    --input-focus: rgba(255, 255, 255, 0.08);
+    
+    --text-primary: #f3f4f6;
+    --text-secondary: #9ca3af;
+    --text-muted: #6b7280;
+    
+    --accent: #38bdf8;          /* Vibrant Sky Blue */
+    --accent-hover: #0ea5e9;
+    --accent-glow: rgba(56, 189, 248, 0.35);
+    
+    --success: #34d399;         /* Mint Green */
+    --warning: #fbbf24;         /* Amber */
+    --error: #f87171;           /* Pastel Coral */
+    --yellow: #fbbf24;
+    
+    --glass-blur: blur(12px) saturate(120%);
+    --shadow-main: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+    --shadow-inset: inset 0 1px 1px 0 rgba(255, 255, 255, 0.05);
+    --shadow-glow: 0 0 20px rgba(56, 189, 248, 0.15);
+    
+    --radius-sm: 8px;
+    --radius-md: 16px;
+    --radius-lg: 24px;
+    --radius-round: 50px;
+    
+    --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    --transition-slow: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Color Palette Override - Light Theme */
+.light-mode {
+    --bg-primary: #f0f4f8;
+    --bg-gradient: linear-gradient(135deg, #e2e8f0 0%, #cbd5e1 100%);
+    --card-bg: rgba(255, 255, 255, 0.45);
+    --card-bg-hover: rgba(255, 255, 255, 0.6);
+    --card-border: rgba(0, 0, 0, 0.08);
+    --card-border-hover: rgba(0, 0, 0, 0.15);
+    --input-bg: rgba(0, 0, 0, 0.03);
+    --input-focus: rgba(0, 0, 0, 0.06);
+    
+    --text-primary: #1e293b;
+    --text-secondary: #475569;
+    --text-muted: #64748b;
+    
+    --accent: #0284c7;          /* Sky Blue (Darker for Contrast) */
+    --accent-hover: #0369a1;
+    --accent-glow: rgba(2, 132, 199, 0.25);
+    
+    --shadow-main: 0 8px 32px 0 rgba(31, 38, 135, 0.08);
+    --shadow-inset: inset 0 1px 1px 0 rgba(255, 255, 255, 0.6);
+    --shadow-glow: 0 0 20px rgba(2, 132, 199, 0.1);
+    
+    --success: #059669;
+    --warning: #d97706;
+    --error: #dc2626;
+}
+
+/* --------------------------------------------------------------------------
+   2. Resets & Boilerplate
+   -------------------------------------------------------------------------- */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Outfit', sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+    background: var(--bg-primary);
+    background-image: var(--bg-gradient);
+    background-attachment: fixed;
+    color: var(--text-primary);
+    min-height: 100vh;
+    overflow-x: hidden;
+    position: relative;
+    transition: var(--transition-slow);
+}
+
+/* Dynamic background nodes */
+.bg-gradient-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    z-index: -2;
+    opacity: 0.8;
+    transition: var(--transition-slow);
+}
+
+.dynamic-weather-bg {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    z-index: -1;
+    opacity: 0.2;
+    mix-blend-mode: screen;
+    pointer-events: none;
+    transition: var(--transition-slow);
+}
+
+/* Custom Scrollbars */
+::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+}
+::-webkit-scrollbar-track {
+    background: rgba(0, 0, 0, 0.05);
+}
+::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+    background: rgba(255, 255, 255, 0.25);
+}
+
+/* Utilities */
+.hidden {
+    display: none !important;
+}
+
+.text-yellow { color: var(--yellow) !important; }
+.text-blue { color: #60a5fa !important; }
+.text-red { color: #f87171 !important; }
+.text-orange { color: #fb923c !important; }
+.text-purple { color: #c084fc !important; }
+
+/* --------------------------------------------------------------------------
+   3. Glassmorphism Card System
+   -------------------------------------------------------------------------- */
+.glass-card {
+    background: var(--card-bg);
+    backdrop-filter: var(--glass-blur);
+    -webkit-backdrop-filter: var(--glass-blur);
+    border: 1px solid var(--card-border);
+    box-shadow: var(--shadow-main), var(--shadow-inset);
+    border-radius: var(--radius-md);
+    transition: var(--transition);
+}
+
+.glass-card:hover {
+    border-color: var(--card-border-hover);
+    background: var(--card-bg-hover);
+}
+
+/* --------------------------------------------------------------------------
+   4. Layout Structure
+   -------------------------------------------------------------------------- */
+.app-container {
+    max-width: 1440px;
+    margin: 0 auto;
+    padding: 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+    min-height: 100vh;
+}
+
+/* Header Component styling */
+.main-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 16px 28px;
+    gap: 24px;
+}
+
+.logo-area {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.logo-icon {
+    font-size: 2rem;
+    color: var(--accent);
+    filter: drop-shadow(0 0 8px var(--accent-glow));
+    animation: float 4s ease-in-out infinite;
+}
+
+.logo-area h1 {
+    font-size: 1.5rem;
+    font-weight: 800;
+    letter-spacing: -0.5px;
+    background: linear-gradient(135deg, var(--text-primary) 30%, var(--accent) 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+/* Search bar styling */
+.search-section {
+    display: flex;
+    flex: 1;
+    max-width: 680px;
+    gap: 12px;
+    align-items: center;
+}
+
+.search-form {
+    display: flex;
+    flex: 1;
+    background: var(--input-bg);
+    border: 1px solid var(--card-border);
+    border-radius: var(--radius-round);
+    padding: 4px 6px 4px 18px;
+    align-items: center;
+    transition: var(--transition);
+}
+
+.search-form:focus-within {
+    background: var(--input-focus);
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px var(--accent-glow);
+}
+
+.input-wrapper {
+    display: flex;
+    align-items: center;
+    flex: 1;
+    gap: 12px;
+}
+
+.search-icon {
+    color: var(--text-secondary);
+    font-size: 1.1rem;
+}
+
+.search-form input {
+    background: transparent;
+    border: none;
+    outline: none;
+    color: var(--text-primary);
+    width: 100%;
+    font-size: 0.95rem;
+    font-weight: 400;
+}
+
+.search-form input::placeholder {
+    color: var(--text-secondary);
+    opacity: 0.7;
+}
+
+.voice-btn {
+    background: transparent;
+    border: none;
+    outline: none;
+    cursor: pointer;
+    color: var(--text-secondary);
+    font-size: 1.1rem;
+    padding: 8px;
+    border-radius: var(--radius-round);
+    transition: var(--transition);
+}
+
+.voice-btn:hover {
+    color: var(--accent);
+    background: var(--input-focus);
+}
+
+.primary-btn {
+    background: var(--accent);
+    border: none;
+    outline: none;
+    cursor: pointer;
+    color: #ffffff;
+    font-weight: 600;
+    font-size: 0.9rem;
+    padding: 10px 24px;
+    border-radius: var(--radius-round);
+    box-shadow: 0 4px 12px var(--accent-glow);
+    transition: var(--transition);
+}
+
+.primary-btn:hover {
+    background: var(--accent-hover);
+    transform: translateY(-1px);
+    box-shadow: 0 6px 16px var(--accent-glow);
+}
+
+.primary-btn:active {
+    transform: translateY(1px);
+}
+
+.location-btn {
+    background: var(--card-bg);
+    border: 1px solid var(--card-border);
+    outline: none;
+    cursor: pointer;
+    color: var(--text-primary);
+    font-weight: 500;
+    font-size: 0.9rem;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 12px 20px;
+    border-radius: var(--radius-round);
+    box-shadow: var(--shadow-inset);
+    transition: var(--transition);
+}
+
+.location-btn:hover {
+    border-color: var(--accent);
+    color: var(--accent);
+    background: var(--card-bg-hover);
+}
+
+/* Control buttons area (Unit Toggle, Dark mode) */
+.controls-area {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}
+
+.unit-toggle {
+    background: var(--card-bg);
+    border: 1px solid var(--card-border);
+    cursor: pointer;
+    width: 44px;
+    height: 44px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: var(--radius-round);
+    box-shadow: var(--shadow-inset);
+    transition: var(--transition);
+    font-weight: 700;
+    color: var(--text-primary);
+}
+
+.unit-toggle:hover {
+    border-color: var(--accent);
+    box-shadow: 0 0 10px var(--accent-glow);
+}
+
+.theme-toggle-btn {
+    background: var(--card-bg);
+    border: 1px solid var(--card-border);
+    cursor: pointer;
+    width: 44px;
+    height: 44px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: var(--radius-round);
+    box-shadow: var(--shadow-inset);
+    transition: var(--transition);
+    color: var(--text-primary);
+    position: relative;
+    overflow: hidden;
+}
+
+.theme-toggle-btn:hover {
+    border-color: var(--accent);
+    color: var(--accent);
+}
+
+.theme-toggle-btn .sun-icon {
+    display: none;
+}
+
+.light-mode .theme-toggle-btn .moon-icon {
+    display: none;
+}
+
+.light-mode .theme-toggle-btn .sun-icon {
+    display: block;
+    color: #f59e0b;
+}
+
+/* --------------------------------------------------------------------------
+   5. Dashboard Grid Structure
+   -------------------------------------------------------------------------- */
+.dashboard-grid {
+    display: grid;
+    grid-template-columns: 280px 1fr;
+    gap: 24px;
+    align-items: start;
+}
+
+/* Sidebar styling */
+.sidebar-panel {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+}
+
+.panel-card {
+    padding: 20px;
+}
+
+.panel-card h3 {
+    font-size: 1rem;
+    font-weight: 600;
+    margin-bottom: 16px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: var(--text-primary);
+    border-bottom: 1px solid var(--card-border);
+    padding-bottom: 10px;
+}
+
+.recent-list-container, .favorites-list-container {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    max-height: 240px;
+    overflow-y: auto;
+    padding-right: 4px;
+}
+
+.empty-placeholder {
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+    text-align: center;
+    padding: 24px 0;
+    font-style: italic;
+}
+
+/* History & Favorite search list items */
+.location-item-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 14px;
+    background: var(--input-bg);
+    border: 1px solid var(--card-border);
+    border-radius: var(--radius-sm);
+    cursor: pointer;
+    transition: var(--transition);
+}
+
+.location-item-row:hover {
+    background: var(--input-focus);
+    border-color: var(--accent);
+    transform: translateX(4px);
+}
+
+.location-item-row span {
+    font-size: 0.9rem;
+    font-weight: 500;
+}
+
+.location-item-row .weather-badge {
+    font-size: 0.85rem;
+    font-weight: 700;
+    background: rgba(255, 255, 255, 0.08);
+    padding: 2px 8px;
+    border-radius: var(--radius-sm);
+}
+
+.light-mode .location-item-row .weather-badge {
+    background: rgba(0, 0, 0, 0.05);
+}
+
+.delete-item-btn {
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    color: var(--text-muted);
+    padding: 4px;
+    transition: var(--transition);
+}
+
+.delete-item-btn:hover {
+    color: var(--error);
+}
+
+/* Main Dashboard section layout */
+.main-weather-content {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+}
+
+.primary-row {
+    display: grid;
+    grid-template-columns: 350px 1fr;
+    gap: 24px;
+}
+
+/* Current Weather Card */
+.current-weather-card {
+    padding: 28px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    position: relative;
+    overflow: hidden;
+}
+
+.current-weather-card::before {
+    content: '';
+    position: absolute;
+    top: -50px;
+    right: -50px;
+    width: 150px;
+    height: 150px;
+    border-radius: 50%;
+    background: radial-gradient(circle, var(--accent-glow) 0%, transparent 70%);
+    pointer-events: none;
+}
+
+.current-weather-card .card-header {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.location-details {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.location-details h2 {
+    font-size: 2rem;
+    font-weight: 800;
+    letter-spacing: -0.5px;
+}
+
+.location-details span {
+    font-size: 0.85rem;
+    font-weight: 700;
+    background: var(--accent);
+    color: #ffffff;
+    padding: 2px 8px;
+    border-radius: var(--radius-sm);
+}
+
+.fav-toggle-btn {
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    color: var(--text-secondary);
+    font-size: 1.25rem;
+    margin-left: 8px;
+    transition: var(--transition);
+}
+
+.fav-toggle-btn:hover {
+    color: var(--yellow);
+    transform: scale(1.1);
+}
+
+.date-display {
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+}
+
+.current-weather-card .card-body {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin: 28px 0;
+}
+
+.temperature-container {
+    display: flex;
+    align-items: flex-start;
+}
+
+.temp-value {
+    font-size: 5rem;
+    font-weight: 800;
+    line-height: 1;
+    letter-spacing: -2px;
+}
+
+.temp-unit {
+    font-size: 2rem;
+    font-weight: 600;
+    margin-top: 8px;
+    color: var(--accent);
+}
+
+.weather-state {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+}
+
+.weather-icon-wrapper {
+    width: 84px;
+    height: 84px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    filter: drop-shadow(0 4px 12px var(--accent-glow));
+}
+
+.weather-icon-large {
+    font-size: 4.5rem;
+    color: var(--text-primary);
+}
+
+.weather-desc {
+    font-size: 0.95rem;
+    font-weight: 600;
+    text-transform: capitalize;
+    color: var(--text-secondary);
+}
+
+.current-weather-card .card-footer {
+    display: flex;
+    gap: 20px;
+    border-top: 1px solid var(--card-border);
+    padding-top: 18px;
+}
+
+.current-weather-card .card-footer span {
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+/* Weather Highlight Metrics Grid */
+.metrics-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+}
+
+.metric-card {
+    padding: 20px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}
+
+.metric-icon {
+    width: 48px;
+    height: 48px;
+    background: var(--input-bg);
+    border: 1px solid var(--card-border);
+    border-radius: var(--radius-sm);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.4rem;
+    color: var(--accent);
+    box-shadow: var(--shadow-inset);
+    transition: var(--transition);
+}
+
+.metric-card:hover .metric-icon {
+    border-color: var(--accent);
+    background: var(--input-focus);
+    transform: scale(1.05);
+}
+
+.metric-info {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.metric-label {
+    font-size: 0.8rem;
+    color: var(--text-secondary);
+    font-weight: 500;
+}
+
+.metric-value {
+    font-size: 1.15rem;
+    font-weight: 700;
+}
+
+.col-span-2 {
+    grid-column: span 2;
+}
+
+.aq-info {
+    width: 100%;
+}
+
+.aqi-meter {
+    width: 100%;
+    height: 6px;
+    background: var(--input-bg);
+    border: 1px solid var(--card-border);
+    border-radius: var(--radius-round);
+    margin-top: 8px;
+    overflow: hidden;
+}
+
+.aqi-fill {
+    height: 100%;
+    border-radius: var(--radius-round);
+    background: linear-gradient(90deg, var(--success), var(--warning), var(--error));
+    width: 20%;
+    transition: var(--transition-slow);
+}
+
+/* Secondary row styling (Sun times & Charts) */
+.secondary-row {
+    display: grid;
+    grid-template-columns: 280px 1fr;
+    gap: 24px;
+}
+
+.sun-card {
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+}
+
+.sun-card h3, .chart-card h3, .forecast-horizontal-section h3, .forecast-vertical-section h3 {
+    font-size: 0.95rem;
+    font-weight: 600;
+    margin-bottom: 18px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.sun-times {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+    flex: 1;
+    gap: 16px;
+}
+
+.sun-event {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    background: var(--input-bg);
+    padding: 12px 16px;
+    border-radius: var(--radius-sm);
+    border: 1px solid var(--card-border);
+}
+
+.sun-event i {
+    font-size: 1.8rem;
+}
+
+.sun-event div {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.sun-event span {
+    font-size: 0.75rem;
+    color: var(--text-secondary);
+}
+
+.sun-event strong {
+    font-size: 1rem;
+    font-weight: 700;
+}
+
+/* Chart Widget Styling */
+.chart-card {
+    padding: 20px;
+}
+
+.chart-wrapper {
+    position: relative;
+    height: 140px;
+    width: 100%;
+}
+
+/* Horizontal Hourly Scroll Bar */
+.forecast-horizontal-section {
+    padding: 20px;
+}
+
+.hourly-scroller {
+    display: flex;
+    gap: 12px;
+    overflow-x: auto;
+    padding-bottom: 8px;
+    scroll-behavior: smooth;
+    -webkit-overflow-scrolling: touch;
+}
+
+.hourly-item {
+    min-width: 80px;
+    background: var(--input-bg);
+    border: 1px solid var(--card-border);
+    border-radius: var(--radius-sm);
+    padding: 14px 10px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+    transition: var(--transition);
+}
+
+.hourly-item:hover {
+    background: var(--input-focus);
+    border-color: var(--accent);
+    transform: translateY(-4px);
+}
+
+.hourly-item span {
+    font-size: 0.75rem;
+    color: var(--text-secondary);
+}
+
+.hourly-item i {
+    font-size: 1.5rem;
+    color: var(--text-primary);
+}
+
+.hourly-item strong {
+    font-size: 0.9rem;
+    font-weight: 700;
+}
+
+/* Vertical 5-Day Forecast Grid */
+.forecast-vertical-section {
+    padding: 20px;
+}
+
+.forecast-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.forecast-day-row {
+    display: grid;
+    grid-template-columns: 140px 1fr 120px;
+    align-items: center;
+    padding: 12px 24px;
+    background: var(--input-bg);
+    border: 1px solid var(--card-border);
+    border-radius: var(--radius-sm);
+    transition: var(--transition);
+}
+
+.forecast-day-row:hover {
+    background: var(--input-focus);
+    border-color: var(--accent);
+}
+
+.day-name {
+    font-size: 0.95rem;
+    font-weight: 600;
+}
+
+.forecast-state {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.forecast-state i {
+    font-size: 1.25rem;
+    color: var(--accent);
+    width: 24px;
+    text-align: center;
+}
+
+.forecast-state span {
+    font-size: 0.9rem;
+    color: var(--text-secondary);
+}
+
+.forecast-temp-range {
+    font-size: 0.9rem;
+    font-weight: 700;
+    text-align: right;
+}
+
+/* Footer Section */
+.app-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 16px 28px;
+    font-size: 0.8rem;
+    color: var(--text-muted);
+}
+
+.app-footer i {
+    animation: heartbeat 1.5s infinite;
+}
+
+/* --------------------------------------------------------------------------
+   6. UI Overlay Components (Spinner, Offline, Toasts)
+   -------------------------------------------------------------------------- */
+.overlay-container {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(8, 11, 20, 0.7);
+    backdrop-filter: var(--glass-blur);
+    -webkit-backdrop-filter: var(--glass-blur);
+    z-index: 1000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    animation: fadeIn 0.3s ease-out;
+}
+
+.spinner-box {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 16px;
+}
+
+.loading-spinner {
+    width: 50px;
+    height: 50px;
+    border: 4px solid rgba(255, 255, 255, 0.08);
+    border-top: 4px solid var(--accent);
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    box-shadow: 0 0 15px var(--accent-glow);
+}
+
+.spinner-box p {
+    font-size: 0.95rem;
+    color: var(--text-secondary);
+    font-weight: 500;
+}
+
+/* Offline Banner notification */
+.offline-notification {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    background: var(--warning);
+    color: #000000;
+    padding: 8px 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    z-index: 2000;
+    font-size: 0.85rem;
+    font-weight: 700;
+    animation: slideDown 0.3s cubic-bezier(0, 0, 0.2, 1);
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+}
+
+/* Toast Container & Notification items */
+.toast-container {
+    position: fixed;
+    bottom: 24px;
+    right: 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    z-index: 9999;
+    pointer-events: none;
+}
+
+.toast {
+    background: var(--card-bg);
+    backdrop-filter: var(--glass-blur);
+    -webkit-backdrop-filter: var(--glass-blur);
+    border-left: 4px solid var(--error);
+    border-top: 1px solid var(--card-border);
+    border-right: 1px solid var(--card-border);
+    border-bottom: 1px solid var(--card-border);
+    padding: 16px 20px;
+    border-radius: var(--radius-sm);
+    color: var(--text-primary);
+    box-shadow: var(--shadow-main);
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    min-width: 300px;
+    max-width: 450px;
+    pointer-events: auto;
+    animation: slideIn 0.3s cubic-bezier(0.18, 0.89, 0.32, 1.28);
+    transition: var(--transition);
+}
+
+.toast.toast-error { border-left-color: var(--error); }
+.toast.toast-success { border-left-color: var(--success); }
+.toast.toast-info { border-left-color: var(--accent); }
+
+.toast i {
+    font-size: 1.2rem;
+}
+
+.toast-error i { color: var(--error); }
+.toast-success i { color: var(--success); }
+.toast-info i { color: var(--accent); }
+
+.toast span {
+    font-size: 0.85rem;
+    font-weight: 500;
+    flex: 1;
+}
+
+.toast-close-btn {
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    color: var(--text-secondary);
+    transition: var(--transition);
+}
+
+.toast-close-btn:hover {
+    color: var(--text-primary);
+}
+
+/* --------------------------------------------------------------------------
+   7. Keyframe Animations
+   -------------------------------------------------------------------------- */
+@keyframes float {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-6px); }
+}
+
+@keyframes heartbeat {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.1); }
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+@keyframes slideDown {
+    from { transform: translateY(-100%); }
+    to { transform: translateY(0); }
+}
+
+@keyframes slideIn {
+    from { transform: translateX(120%); opacity: 0; }
+    to { transform: translateX(0); opacity: 1; }
+}
+
+/* --------------------------------------------------------------------------
+   8. Media Queries (Mobile Responsiveness)
+   -------------------------------------------------------------------------- */
+@media (max-width: 1024px) {
+    .dashboard-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .primary-row {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 768px) {
+    .app-container {
+        padding: 16px;
+        gap: 16px;
+    }
+    
+    .main-header {
+        flex-direction: column;
+        align-items: stretch;
+        padding: 16px 20px;
+    }
+    
+    .search-section {
+        flex-direction: column;
+        align-items: stretch;
+    }
+    
+    .location-btn {
+        justify-content: center;
+    }
+    
+    .controls-area {
+        justify-content: center;
+        margin-top: 8px;
+    }
+
+    .metrics-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+    
+    .col-span-2 {
+        grid-column: span 2;
+    }
+    
+    .secondary-row {
+        grid-template-columns: 1fr;
+    }
+    
+    .forecast-day-row {
+        grid-template-columns: 100px 1fr 100px;
+        padding: 12px 16px;
+    }
+    
+    .app-footer {
+        flex-direction: column;
+        gap: 10px;
+        text-align: center;
+    }
+}
+
+@media (max-width: 480px) {
+    .metrics-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .col-span-2 {
+        grid-column: span 1;
+    }
+    
+    .temp-value {
+        font-size: 3.5rem;
+    }
+    
+    .weather-icon-large {
+        font-size: 3.5rem;
+    }
+    
+    .forecast-day-row {
+        grid-template-columns: 80px 1fr 80px;
+        padding: 10px 12px;
+        font-size: 0.85rem;
+    }
+    
+    .forecast-state span {
+        display: none;
+    }
+}
